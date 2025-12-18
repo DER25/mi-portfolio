@@ -1,511 +1,1055 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Daniel De Elízaga — Portfolio OS</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            background-color: #000;
-        }
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700&display=swap');
 
-        .wallpaper {
-            background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-        }
+      body {
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+        background-color: #000;
+      }
 
-        .scrollbar-custom::-webkit-scrollbar {
-            width: 8px;
-        }
-        .scrollbar-custom::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .scrollbar-custom::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-        }
-        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
+      .wallpaper {
+        background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+      }
 
-        @keyframes fadeInZoom {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .animate-window {
-            animation: fadeInZoom 0.2s ease-out forwards;
-        }
+      .scrollbar-custom::-webkit-scrollbar {
+        width: 8px;
+      }
+      .scrollbar-custom::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .scrollbar-custom::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+      }
+      .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
 
-        .dock-indicator {
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            position: absolute;
-            bottom: -6px;
-            box-shadow: 0 0 5px white;
+      @keyframes fadeInZoom {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
         }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .animate-window {
+        animation: fadeInZoom 0.2s ease-out forwards;
+      }
 
-        .hidden-app {
-            display: none !important;
-        }
-        
-        .cursor-blink {
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
+      .dock-indicator {
+        width: 4px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        position: absolute;
+        bottom: -6px;
+        box-shadow: 0 0 5px white;
+      }
 
-        .window-surface {
-            background-color: #1e1e1e;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+      .hidden-app {
+        display: none !important;
+      }
+
+      .cursor-blink {
+        animation: blink 1s step-end infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
         }
+      }
+
+      .window-surface {
+        background-color: #1e1e1e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
     </style>
-</head>
-<body class="h-screen w-screen text-white select-none">
-
+  </head>
+  <body class="h-screen w-screen text-white select-none">
     <!-- PANTALLA DE BLOQUEO -->
-    <div id="lock-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center wallpaper transition-all duration-1000">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-md"></div>
+    <div
+      id="lock-screen"
+      class="fixed inset-0 z-[100] flex flex-col items-center justify-center wallpaper transition-all duration-1000"
+    >
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-md"></div>
 
-        <div class="relative z-10 flex flex-col items-center w-full max-w-md px-4">
-            <div class="mb-12 text-center">
-                <div id="lock-time" class="text-6xl md:text-8xl font-thin tracking-tight text-white drop-shadow-lg">00:00</div>
-                <div id="lock-date" class="text-lg md:text-xl font-medium text-white/80 mt-2 drop-shadow-md">Fecha</div>
-            </div>
-
-            <div class="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
-                <div class="w-24 h-24 md:w-32 md:h-32 rounded-full p-1 bg-white/10 backdrop-blur-xl shadow-2xl border border-white/20 overflow-hidden">
-                    <img src="perfil.png" alt="User" class="w-full h-full object-cover rounded-full" onerror="this.src='https://ui-avatars.com/api/?name=Daniel+De+Elizaga&background=0D8ABC&color=fff'">
-                </div>
-                
-                <div class="text-center">
-                    <h2 class="text-2xl font-bold text-white drop-shadow-md">Daniel De Elízaga</h2>
-                    <p class="text-sm text-white/60 mt-1">ASIR & Cybersecurity</p>
-                </div>
-
-                <form id="login-form" class="relative w-full max-w-[240px]">
-                    <input 
-                        type="password" 
-                        placeholder="Presiona Enter" 
-                        class="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-full py-2 px-4 text-sm text-white placeholder-white/40 focus:outline-none focus:bg-white/20 transition-all text-center"
-                        autofocus
-                    >
-                    <button type="submit" class="absolute right-1 top-1 bottom-1 w-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white/80 transition-colors">
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </button>
-                </form>
-                
-                <p class="text-xs text-white/40 mt-4 cursor-pointer hover:text-white/60 transition-colors" onclick="unlock()">
-                    Click para entrar como Invitado
-                </p>
-            </div>
+      <div
+        class="relative z-10 flex flex-col items-center w-full max-w-md px-4"
+      >
+        <div class="mb-12 text-center">
+          <div
+            id="lock-time"
+            class="text-6xl md:text-8xl font-thin tracking-tight text-white drop-shadow-lg"
+          >
+            00:00
+          </div>
+          <div
+            id="lock-date"
+            class="text-lg md:text-xl font-medium text-white/80 mt-2 drop-shadow-md"
+          >
+            Fecha
+          </div>
         </div>
-        
-        <div class="absolute bottom-8 text-xs text-white/30 flex gap-4">
-            <span class="flex items-center gap-1"><i data-lucide="wifi" class="w-3 h-3"></i> Connected</span>
-            <span class="flex items-center gap-1"><i data-lucide="battery" class="w-3 h-3"></i> 100%</span>
+
+        <div
+          class="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500"
+        >
+          <div
+            class="w-24 h-24 md:w-32 md:h-32 rounded-full p-1 bg-white/10 backdrop-blur-xl shadow-2xl border border-white/20 overflow-hidden"
+          >
+            <img
+              src="perfil.png"
+              alt="User"
+              class="w-full h-full object-cover rounded-full"
+              onerror="this.src='https://ui-avatars.com/api/?name=Daniel+De+Elizaga&background=0D8ABC&color=fff'"
+            />
+          </div>
+
+          <div class="text-center">
+            <h2 class="text-2xl font-bold text-white drop-shadow-md">
+              Daniel De Elízaga
+            </h2>
+            <p class="text-sm text-white/60 mt-1">ASIR & Cybersecurity</p>
+          </div>
+
+          <form id="login-form" class="relative w-full max-w-[240px]">
+            <input
+              type="password"
+              placeholder="Presiona Enter"
+              class="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-full py-2 px-4 text-sm text-white placeholder-white/40 focus:outline-none focus:bg-white/20 transition-all text-center"
+              autofocus
+            />
+            <button
+              type="submit"
+              class="absolute right-1 top-1 bottom-1 w-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white/80 transition-colors"
+            >
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </form>
+
+          <p
+            class="text-xs text-white/40 mt-4 cursor-pointer hover:text-white/60 transition-colors"
+            onclick="unlock()"
+          >
+            Click para entrar como Invitado
+          </p>
         </div>
+      </div>
+
+      <div class="absolute bottom-8 text-xs text-white/30 flex gap-4">
+        <span class="flex items-center gap-1"
+          ><i data-lucide="wifi" class="w-3 h-3"></i> Connected</span
+        >
+        <span class="flex items-center gap-1"
+          ><i data-lucide="battery" class="w-3 h-3"></i> 100%</span
+        >
+      </div>
     </div>
 
     <!-- ESCRITORIO PRINCIPAL -->
-    <div id="desktop" class="h-screen w-screen overflow-hidden wallpaper relative hidden">
-        
-        <!-- Top Bar -->
-        <div class="fixed top-0 left-0 w-full h-8 bg-black/50 backdrop-blur-xl flex justify-between items-center px-4 text-xs font-medium text-white z-50 border-b border-white/5">
-            <div class="flex items-center gap-4">
-                <span class="font-bold flex items-center gap-1"><i data-lucide="command" class="w-3.5 h-3.5"></i> DanielOS</span>
-                <span class="hidden sm:inline font-bold">Finder</span>
-                <span class="hidden sm:inline text-white/80">Archivo</span>
-                <span class="hidden sm:inline text-white/80">Edición</span>
-                <span class="hidden sm:inline text-white/80">Ver</span>
-                <span class="hidden sm:inline text-white/80">Ir</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
-                <i data-lucide="battery" class="w-3.5 h-3.5"></i>
-                <span id="top-bar-time">00:00</span>
-            </div>
+    <div
+      id="desktop"
+      class="h-screen w-screen overflow-hidden wallpaper relative hidden"
+    >
+      <!-- Top Bar -->
+      <div
+        class="fixed top-0 left-0 w-full h-8 bg-black/50 backdrop-blur-xl flex justify-between items-center px-4 text-xs font-medium text-white z-50 border-b border-white/5"
+      >
+        <div class="flex items-center gap-4">
+          <span class="font-bold flex items-center gap-1"
+            ><i data-lucide="command" class="w-3.5 h-3.5"></i> DanielOS</span
+          >
+          <span class="hidden sm:inline font-bold">Finder</span>
+          <span class="hidden sm:inline text-white/80">Archivo</span>
+          <span class="hidden sm:inline text-white/80">Edición</span>
+          <span class="hidden sm:inline text-white/80">Ver</span>
+          <span class="hidden sm:inline text-white/80">Ir</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <i data-lucide="wifi" class="w-3.5 h-3.5"></i>
+          <i data-lucide="battery" class="w-3.5 h-3.5"></i>
+          <span id="top-bar-time">00:00</span>
+        </div>
+      </div>
+
+      <!-- Desktop Icons -->
+      <div
+        class="absolute top-12 right-4 flex flex-col items-end gap-6 z-20 p-2"
+      >
+        <div
+          class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors"
+          onclick="openApp('about')"
+        >
+          <div
+            class="w-14 h-14 bg-blue-500/80 rounded-lg shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform"
+          >
+            <i data-lucide="user" class="text-white w-8 h-8"></i>
+          </div>
+          <span
+            class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded"
+            >Mi Perfil</span
+          >
         </div>
 
-        <!-- Desktop Icons -->
-        <div class="absolute top-12 right-4 flex flex-col items-end gap-6 z-20 p-2">
-            <div class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors" onclick="openApp('about')">
-                <div class="w-14 h-14 bg-blue-500/80 rounded-lg shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <i data-lucide="user" class="text-white w-8 h-8"></i>
-                </div>
-                <span class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded">Mi Perfil</span>
-            </div>
-
-            <div class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors" onclick="openApp('projects')">
-                <div class="w-14 h-14 bg-blue-500/80 rounded-lg shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <i data-lucide="folder" class="text-white w-8 h-8"></i>
-                </div>
-                <span class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded">Proyectos</span>
-            </div>
-
-            <div class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors" onclick="openApp('experience')">
-                <div class="w-14 h-14 bg-blue-500/80 rounded-lg shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <i data-lucide="briefcase" class="text-white w-8 h-8"></i>
-                </div>
-                <span class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded">Experiencia</span>
-            </div>
-
-            <div class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors" onclick="openApp('skills')">
-                <div class="w-14 h-14 bg-gray-800 border border-gray-600 rounded-md shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <i data-lucide="terminal" class="text-green-400 w-8 h-8"></i>
-                </div>
-                <span class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded">skills.sh</span>
-            </div>
-            
-            <a href="curriculum.pdf" download="Daniel_De_Elizaga_CV.pdf" class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors">
-                <div class="w-14 h-14 bg-white rounded-sm border border-gray-300 shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform relative">
-                    <i data-lucide="file-text" class="text-gray-600 w-8 h-8"></i>
-                    <div class="absolute bottom-1 right-1 bg-red-500 text-white text-[6px] px-1 rounded font-bold">PDF</div>
-                </div>
-                <span class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded">CV.pdf</span>
-            </a>
+        <div
+          class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors"
+          onclick="openApp('projects')"
+        >
+          <div
+            class="w-14 h-14 bg-blue-500/80 rounded-lg shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform"
+          >
+            <i data-lucide="folder" class="text-white w-8 h-8"></i>
+          </div>
+          <span
+            class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded"
+            >Proyectos</span
+          >
         </div>
 
-        <!-- CONTEXTO VENTANAS -->
-        <div id="window-manager" class="relative w-full h-full">
-            <div id="win-about" class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[55rem] md:h-[36rem] rounded-lg shadow-2xl flex flex-col animate-window">
-                <div class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40">
-                    <div class="flex items-center gap-2 w-16">
-                        <div class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer" onclick="closeApp('about')"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#28c840]" onclick="toggleMaximize('win-about')"></div>
-                    </div>
-                    <div class="text-gray-400 text-xs font-medium flex items-center gap-2"><i data-lucide="user" class="w-3.5 h-3.5"></i> Mi Perfil</div>
-                    <div class="w-16"></div>
-                </div>
-                <div class="flex-1 overflow-y-auto scrollbar-custom flex flex-col md:flex-row">
-                    <div class="w-full md:w-64 bg-[#252526] p-8 flex flex-col items-center text-center border-b md:border-r border-white/5">
-                        <img src="perfil.png" class="w-32 h-32 rounded-full border-4 border-[#333] mb-4 object-cover shadow-lg" onerror="this.src='https://ui-avatars.com/api/?name=Daniel+De+Elizaga&background=0D8ABC&color=fff'">
-                        <h2 class="text-lg font-bold text-white">Daniel De Elízaga</h2>
-                        <p class="text-xs text-gray-400 mt-1">ASIR & Ciberseguridad</p>
-                        <div class="flex gap-2 mt-4">
-                            <a href="https://linkedin.com/in/daniel-de-el%C3%ADzaga-ruiz" target="_blank" class="p-2 bg-white/5 rounded-md hover:bg-blue-600 transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
-                            <a href="https://github.com/DER25" target="_blank" class="p-2 bg-white/5 rounded-md hover:bg-black transition-colors"><i data-lucide="github" class="w-4 h-4"></i></a>
-                            <a href="mailto:delizaga4@gmail.com" class="p-2 bg-white/5 rounded-md hover:bg-red-600 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></a>
-                        </div>
-                    </div>
-                    <div class="flex-1 p-8 md:p-10">
-                        <h1 class="text-2xl font-bold mb-6 border-b border-white/10 pb-2">Sobre Mí</h1>
-                        <div class="space-y-4 text-gray-300 text-sm leading-relaxed text-justify">
-                            <p>Estudiante de grado superior en <strong>Administración de Sistemas Informáticos en Red (ASIR)</strong>, con sólidos conocimientos en infraestructuras IT, redes, desarrollo web y programación.</p>
-                            <p>Motivado para aplicar y ampliar habilidades técnicas en entornos tecnológicos dinámicos y desafiantes.</p>
-                            <p>Me defino por mis habilidades de trabajo en equipo, empatía y orientación al usuario, proactividad, resolución de problemas y gestión del estrés.</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 mt-8">
-                            <div class="p-4 bg-[#252526] rounded border border-white/5">
-                                <i data-lucide="shield" class="text-purple-400 mb-2 w-5 h-5"></i>
-                                <h3 class="font-bold text-sm">Ciberseguridad</h3>
-                                <p class="text-[11px] text-gray-400">Pentesting, SIEM, SOC, OWASP Top 10, OSINT.</p>
-                            </div>
-                            <div class="p-4 bg-[#252526] rounded border border-white/5">
-                                <i data-lucide="server" class="text-blue-400 mb-2 w-5 h-5"></i>
-                                <h3 class="font-bold text-sm">Sistemas</h3>
-                                <p class="text-[11px] text-gray-400">Windows/Linux Server, Active Directory, Azure Cloud.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="win-projects" class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[55rem] md:h-[36rem] rounded-lg shadow-2xl flex flex-col animate-window">
-                <div class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40">
-                    <div class="flex items-center gap-2 w-16">
-                        <div class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer" onclick="closeApp('projects')"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#28c840]" onclick="toggleMaximize('win-projects')"></div>
-                    </div>
-                    <div class="text-gray-400 text-xs font-medium flex items-center gap-2"><i data-lucide="folder" class="w-3.5 h-3.5"></i> Proyectos</div>
-                    <div class="w-16"></div>
-                </div>
-                <div class="flex-1 overflow-y-auto p-8 scrollbar-custom">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-[#252526] p-5 rounded border border-white/5 hover:bg-[#2a2a2b] transition-colors group">
-                            <div class="flex justify-between mb-3">
-                                <div class="text-green-400 p-2 bg-white/5 rounded-md"><i data-lucide="wifi" class="w-5 h-5"></i></div>
-                                <i data-lucide="external-link" class="w-4 h-4 text-gray-500"></i>
-                            </div>
-                            <h3 class="font-bold mb-2">Infraestructura WiFi Segura</h3>
-                            <p class="text-xs text-gray-400 mb-4">Diseño e implementación de red inalámbrica corporativa con segmentación VLANs y WPA3 Enterprise.</p>
-                            <div class="flex gap-2">
-                                <span class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded">UBIQUITI</span>
-                                <span class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded">REDES</span>
-                            </div>
-                        </div>
-                        <div class="bg-[#252526] p-5 rounded border border-white/5 hover:bg-[#2a2a2b] transition-colors group">
-                            <div class="flex justify-between mb-3">
-                                <div class="text-blue-400 p-2 bg-white/5 rounded-md"><i data-lucide="database" class="w-5 h-5"></i></div>
-                                <i data-lucide="external-link" class="w-4 h-4 text-gray-500"></i>
-                            </div>
-                            <h3 class="font-bold mb-2">Disaster Recovery System</h3>
-                            <p class="text-xs text-gray-400 mb-4">Backups inmutables automatizados y replicación off-site.</p>
-                            <div class="flex gap-2">
-                                <span class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded">VEEAM</span>
-                                <span class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded">SYNOLOGY</span>
-                            </div>
-                        </div>
-                        <div class="bg-[#252526] p-5 rounded border border-white/5 hover:bg-[#2a2a2b] transition-colors group">
-                            <div class="flex justify-between mb-3">
-                                <div class="text-red-400 p-2 bg-white/5 rounded-md"><i data-lucide="shield" class="w-5 h-5"></i></div>
-                                <a href="https://github.com/DER25" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i data-lucide="external-link" class="w-4 h-4"></i></a>
-                            </div>
-                            <h3 class="font-bold mb-2">Lab de Pentesting</h3>
-                            <p class="text-xs text-gray-400 mb-4">Entorno virtualizado para Red Team: simulaciones de ataque.</p>
-                            <div class="flex gap-2">
-                                <span class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded">KALI LINUX</span>
-                                <span class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded">DOCKER</span>
-                            </div>
-                        </div>
-                        <div class="bg-[#252526] p-5 rounded border border-white/5 hover:bg-[#2a2a2b] transition-colors group">
-                            <div class="flex justify-between mb-3">
-                                <div class="text-yellow-400 p-2 bg-white/5 rounded-md"><i data-lucide="code" class="w-5 h-5"></i></div>
-                                <a href="https://github.com/DER25/ProyectoDOM-GaleriaDinamica" target="_blank" class="text-gray-500 hover:text-white transition-colors"><i data-lucide="external-link" class="w-4 h-4"></i></a>
-                            </div>
-                            <h3 class="font-bold mb-2">Galería Dinámica DOM</h3>
-                            <p class="text-xs text-gray-400 mb-4">SPA interactiva sin frameworks. Manipulación directa del DOM.</p>
-                            <div class="flex gap-2">
-                                <span class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded">JS VANILLA</span>
-                                <span class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded">FRONTEND</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="win-experience" class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[55rem] md:h-[36rem] rounded-lg shadow-2xl flex flex-col animate-window">
-                <div class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40">
-                    <div class="flex items-center gap-2 w-16">
-                        <div class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer" onclick="closeApp('experience')"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#28c840]" onclick="toggleMaximize('win-experience')"></div>
-                    </div>
-                    <div class="text-gray-400 text-xs font-medium flex items-center gap-2"><i data-lucide="briefcase" class="w-3.5 h-3.5"></i> Experiencia</div>
-                    <div class="w-16"></div>
-                </div>
-                <div class="flex-1 overflow-y-auto p-8 scrollbar-custom flex flex-col md:flex-row gap-8 text-gray-300">
-                    <div class="flex-1">
-                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2 border-b border-white/5 pb-2">Experiencia Laboral</h3>
-                        <div class="relative pl-4 border-l-2 border-white/10 space-y-8">
-                            <div>
-                                <h4 class="font-bold text-white">Técnico de Sistemas y Redes</h4>
-                                <div class="text-xs text-blue-400 mb-2">Fundación de los Ferrocarriles Españoles (FFE) | 2025</div>
-                                <ul class="text-sm list-disc list-inside space-y-1">
-                                    <li>Copias de seguridad con Veeam & Synology.</li>
-                                    <li>Implementación de entornos WiFi con Ubiquiti.</li>
-                                    <li>Soporte técnico y resolución nivel 2.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b border-white/5 pb-2">Formación</h3>
-                        <div class="bg-[#252526] p-4 rounded border border-white/5 mb-4">
-                            <h4 class="font-bold text-white text-sm">ASIR + Máster Ciberseguridad</h4>
-                            <div class="text-xs text-gray-500 mt-1">Prometeo, by thePower | 2024 - Actualidad</div>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="text-[10px] bg-blue-900/20 text-blue-300 px-2 py-1 rounded border border-blue-500/20">Azure AZ-900</span>
-                            <span class="text-[10px] bg-yellow-900/20 text-yellow-300 px-2 py-1 rounded border border-yellow-500/20">Google Python</span>
-                            <span class="text-[10px] bg-purple-900/20 text-purple-300 px-2 py-1 rounded border border-purple-500/20">Cambridge B2</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="win-skills" class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[50rem] md:h-[30rem] rounded-lg shadow-2xl flex flex-col animate-window font-mono">
-                <div class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40">
-                    <div class="flex items-center gap-2 w-16">
-                        <div class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer" onclick="closeApp('skills')"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#28c840]"></div>
-                    </div>
-                    <div class="text-gray-400 text-xs">zsh — skills.sh</div>
-                    <div class="w-16"></div>
-                </div>
-                <div class="flex-1 p-6 text-sm overflow-y-auto scrollbar-custom">
-                    <div class="mb-4">
-                        <span class="text-green-500">➜</span> <span class="text-blue-400">~</span> <span class="text-yellow-400">./show_skills.sh</span> --verbose
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-8 p-2 text-gray-300">
-                        <div>
-                            <h3 class="text-green-500 font-bold mb-3 text-xs uppercase tracking-widest">>> HARD SKILLS</h3>
-                            <ul class="space-y-2 text-xs">
-                                <li>[✔] Seguridad Ofensiva (Nmap, Pentesting)</li>
-                                <li>[✔] Windows Server & AD</li>
-                                <li>[✔] Linux & Bash Scripting</li>
-                                <li>[✔] Azure Cloud</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 class="text-blue-500 font-bold mb-3 text-xs uppercase tracking-widest">>> SOFT SKILLS</h3>
-                            <ul class="space-y-2 text-xs">
-                                <li>[*] Resolución de Problemas</li>
-                                <li>[*] Trabajo en Equipo</li>
-                                <li>[*] Gestión del Estrés</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="text-green-500">➜</span> <span class="text-blue-400">~</span> <span class="w-2 h-4 bg-gray-500 cursor-blink"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="win-contact" class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[55rem] md:h-[36rem] rounded-lg shadow-2xl flex flex-col animate-window">
-                <div class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40">
-                    <div class="flex items-center gap-2 w-16">
-                        <div class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer" onclick="closeApp('contact')"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#28c840]"></div>
-                    </div>
-                    <div class="text-gray-400 text-xs font-medium flex items-center gap-2">Correo</div>
-                    <div class="w-16"></div>
-                </div>
-                <div class="flex-1 flex flex-col p-8">
-                    <form onsubmit="handleEmail(event)" class="space-y-4">
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[10px] text-gray-500 font-bold uppercase ml-1">Para</label>
-                            <div class="p-2 bg-[#2a2a2b] rounded border border-white/5 text-sm text-gray-300">Daniel De Elízaga <span class="text-gray-500">&lt;delizaga4@gmail.com&gt;</span></div>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[10px] text-gray-500 font-bold uppercase ml-1">Asunto</label>
-                            <input id="email-subject" type="text" class="bg-[#2a2a2b] border border-white/5 rounded p-3 text-sm outline-none focus:border-blue-500/50">
-                        </div>
-                        <div class="flex-1 flex flex-col gap-1">
-                            <label class="text-[10px] text-gray-500 font-bold uppercase ml-1">Mensaje</label>
-                            <textarea id="email-body" class="flex-1 min-h-[150px] bg-[#2a2a2b] border border-white/5 rounded p-3 text-sm outline-none focus:border-blue-500/50 resize-none"></textarea>
-                        </div>
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded font-bold text-sm shadow-xl self-end">Enviar Correo</button>
-                    </form>
-                </div>
-            </div>
+        <div
+          class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors"
+          onclick="openApp('experience')"
+        >
+          <div
+            class="w-14 h-14 bg-blue-500/80 rounded-lg shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform"
+          >
+            <i data-lucide="briefcase" class="text-white w-8 h-8"></i>
+          </div>
+          <span
+            class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded"
+            >Experiencia</span
+          >
         </div>
 
-        <!-- DOCK -->
-        <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
-            <div class="flex items-end gap-3 px-4 py-3 bg-white/10 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl">
-                <div class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer" onclick="openApp('about')">
-                    <i data-lucide="user" class="text-blue-400 w-6 h-6"></i>
-                    <div id="dot-about" class="dock-indicator hidden"></div>
-                </div>
-                <div class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer" onclick="openApp('projects')">
-                    <i data-lucide="folder" class="text-blue-400 w-6 h-6"></i>
-                    <div id="dot-projects" class="dock-indicator hidden"></div>
-                </div>
-                <div class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer" onclick="openApp('experience')">
-                    <i data-lucide="briefcase" class="text-blue-400 w-6 h-6"></i>
-                    <div id="dot-experience" class="dock-indicator hidden"></div>
-                </div>
-                <div class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer" onclick="openApp('skills')">
-                    <i data-lucide="terminal" class="text-gray-400 w-6 h-6"></i>
-                    <div id="dot-skills" class="dock-indicator hidden"></div>
-                </div>
-                <div class="w-px h-8 bg-white/20 mx-1"></div>
-                <div class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer" onclick="openApp('contact')">
-                    <i data-lucide="mail" class="text-blue-400 w-6 h-6"></i>
-                    <div id="dot-contact" class="dock-indicator hidden"></div>
-                </div>
-            </div>
+        <div
+          class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors"
+          onclick="openApp('skills')"
+        >
+          <div
+            class="w-14 h-14 bg-gray-800 border border-gray-600 rounded-md shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform"
+          >
+            <i data-lucide="terminal" class="text-green-400 w-8 h-8"></i>
+          </div>
+          <span
+            class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded"
+            >skills.sh</span
+          >
         </div>
+
+        <a
+          href="curriculum.pdf"
+          download="Daniel_De_Elizaga_CV.pdf"
+          class="group flex flex-col items-center gap-1 cursor-pointer w-24 p-2 rounded hover:bg-white/5 transition-colors"
+        >
+          <div
+            class="w-14 h-14 bg-white rounded-sm border border-gray-300 shadow-lg flex items-center justify-center group-hover:scale-105 transition-transform relative"
+          >
+            <i data-lucide="file-text" class="text-gray-600 w-8 h-8"></i>
+            <div
+              class="absolute bottom-1 right-1 bg-red-500 text-white text-[6px] px-1 rounded font-bold"
+            >
+              PDF
+            </div>
+          </div>
+          <span
+            class="text-[11px] font-medium text-white drop-shadow-md text-center group-hover:bg-blue-600/80 px-1 rounded"
+            >CV.pdf</span
+          >
+        </a>
+      </div>
+
+      <!-- CONTEXTO VENTANAS -->
+      <div id="window-manager" class="relative w-full h-full">
+        <div
+          id="win-about"
+          class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[55rem] md:h-[36rem] rounded-lg shadow-2xl flex flex-col animate-window"
+        >
+          <div
+            class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40"
+          >
+            <div class="flex items-center gap-2 w-16">
+              <div
+                class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer"
+                onclick="closeApp('about')"
+              ></div>
+              <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+              <div
+                class="w-3 h-3 rounded-full bg-[#28c840]"
+                onclick="toggleMaximize('win-about')"
+              ></div>
+            </div>
+            <div
+              class="text-gray-400 text-xs font-medium flex items-center gap-2"
+            >
+              <i data-lucide="user" class="w-3.5 h-3.5"></i> Mi Perfil
+            </div>
+            <div class="w-16"></div>
+          </div>
+          <div
+            class="flex-1 overflow-y-auto scrollbar-custom flex flex-col md:flex-row"
+          >
+            <div
+              class="w-full md:w-64 bg-[#252526] p-8 flex flex-col items-center text-center border-b md:border-r border-white/5"
+            >
+              <img
+                src="perfil.png"
+                class="w-32 h-32 rounded-full border-4 border-[#333] mb-4 object-cover shadow-lg"
+                onerror="this.src='https://ui-avatars.com/api/?name=Daniel+De+Elizaga&background=0D8ABC&color=fff'"
+              />
+              <h2 class="text-lg font-bold text-white">Daniel De Elízaga</h2>
+              <p class="text-xs text-gray-400 mt-1">ASIR & Ciberseguridad</p>
+              <div class="flex gap-2 mt-4">
+                <a
+                  href="https://linkedin.com/in/daniel-de-el%C3%ADzaga-ruiz"
+                  target="_blank"
+                  class="p-2 bg-white/5 rounded-md hover:bg-blue-600 transition-colors"
+                  ><i data-lucide="linkedin" class="w-4 h-4"></i
+                ></a>
+                <a
+                  href="https://github.com/DER25"
+                  target="_blank"
+                  class="p-2 bg-white/5 rounded-md hover:bg-black transition-colors"
+                  ><i data-lucide="github" class="w-4 h-4"></i
+                ></a>
+                <a
+                  href="mailto:delizaga4@gmail.com"
+                  class="p-2 bg-white/5 rounded-md hover:bg-red-600 transition-colors"
+                  ><i data-lucide="mail" class="w-4 h-4"></i
+                ></a>
+              </div>
+            </div>
+            <div class="flex-1 p-8 md:p-10">
+              <h1 class="text-2xl font-bold mb-6 border-b border-white/10 pb-2">
+                Sobre Mí
+              </h1>
+              <div
+                class="space-y-4 text-gray-300 text-sm leading-relaxed text-justify"
+              >
+                <p>
+                  Estudiante de grado superior en
+                  <strong
+                    >Administración de Sistemas Informáticos en Red
+                    (ASIR)</strong
+                  >, con sólidos conocimientos en infraestructuras IT, redes,
+                  desarrollo web y programación.
+                </p>
+                <p>
+                  Motivado para aplicar y ampliar habilidades técnicas en
+                  entornos tecnológicos dinámicos y desafiantes.
+                </p>
+                <p>
+                  Me defino por mis habilidades de trabajo en equipo, empatía y
+                  orientación al usuario, proactividad, resolución de problemas
+                  y gestión del estrés.
+                </p>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mt-8">
+                <div class="p-4 bg-[#252526] rounded border border-white/5">
+                  <i
+                    data-lucide="shield"
+                    class="text-purple-400 mb-2 w-5 h-5"
+                  ></i>
+                  <h3 class="font-bold text-sm">Ciberseguridad</h3>
+                  <p class="text-[11px] text-gray-400">
+                    Pentesting, SIEM, SOC, OWASP Top 10, OSINT.
+                  </p>
+                </div>
+                <div class="p-4 bg-[#252526] rounded border border-white/5">
+                  <i
+                    data-lucide="server"
+                    class="text-blue-400 mb-2 w-5 h-5"
+                  ></i>
+                  <h3 class="font-bold text-sm">Sistemas</h3>
+                  <p class="text-[11px] text-gray-400">
+                    Windows/Linux Server, Active Directory, Azure Cloud.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="win-projects"
+          class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[55rem] md:h-[36rem] rounded-lg shadow-2xl flex flex-col animate-window"
+        >
+          <div
+            class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40"
+          >
+            <div class="flex items-center gap-2 w-16">
+              <div
+                class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer"
+                onclick="closeApp('projects')"
+              ></div>
+              <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+              <div
+                class="w-3 h-3 rounded-full bg-[#28c840]"
+                onclick="toggleMaximize('win-projects')"
+              ></div>
+            </div>
+            <div
+              class="text-gray-400 text-xs font-medium flex items-center gap-2"
+            >
+              <i data-lucide="folder" class="w-3.5 h-3.5"></i> Proyectos
+            </div>
+            <div class="w-16"></div>
+          </div>
+          <div class="flex-1 overflow-y-auto p-8 scrollbar-custom">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div
+                class="bg-[#252526] p-5 rounded border border-white/5 hover:bg-[#2a2a2b] transition-colors group"
+              >
+                <div class="flex justify-between mb-3">
+                  <div class="text-green-400 p-2 bg-white/5 rounded-md">
+                    <i data-lucide="wifi" class="w-5 h-5"></i>
+                  </div>
+                  <i
+                    data-lucide="external-link"
+                    class="w-4 h-4 text-gray-500"
+                  ></i>
+                </div>
+                <h3 class="font-bold mb-2">Infraestructura WiFi Segura</h3>
+                <p class="text-xs text-gray-400 mb-4">
+                  Diseño e implementación de red inalámbrica corporativa con
+                  segmentación VLANs y WPA3 Enterprise.
+                </p>
+                <div class="flex gap-2">
+                  <span
+                    class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded"
+                    >UBIQUITI</span
+                  >
+                  <span
+                    class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded"
+                    >REDES</span
+                  >
+                </div>
+              </div>
+              <div
+                class="bg-[#252526] p-5 rounded border border-white/5 hover:bg-[#2a2a2b] transition-colors group"
+              >
+                <div class="flex justify-between mb-3">
+                  <div class="text-blue-400 p-2 bg-white/5 rounded-md">
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                  </div>
+                  <i
+                    data-lucide="external-link"
+                    class="w-4 h-4 text-gray-500"
+                  ></i>
+                </div>
+                <h3 class="font-bold mb-2">Disaster Recovery System</h3>
+                <p class="text-xs text-gray-400 mb-4">
+                  Backups inmutables automatizados y replicación off-site.
+                </p>
+                <div class="flex gap-2">
+                  <span
+                    class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded"
+                    >VEEAM</span
+                  >
+                  <span
+                    class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded"
+                    >SYNOLOGY</span
+                  >
+                </div>
+              </div>
+              <div
+                class="bg-[#252526] p-5 rounded border border-white/5 hover:bg-[#2a2a2b] transition-colors group"
+              >
+                <div class="flex justify-between mb-3">
+                  <div class="text-red-400 p-2 bg-white/5 rounded-md">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                  </div>
+                  <a
+                    href="https://github.com/DER25"
+                    target="_blank"
+                    class="text-gray-500 hover:text-white transition-colors"
+                    ><i data-lucide="external-link" class="w-4 h-4"></i
+                  ></a>
+                </div>
+                <h3 class="font-bold mb-2">Lab de Pentesting</h3>
+                <p class="text-xs text-gray-400 mb-4">
+                  Entorno virtualizado para Red Team: simulaciones de ataque.
+                </p>
+                <div class="flex gap-2">
+                  <span
+                    class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded"
+                    >KALI LINUX</span
+                  >
+                  <span
+                    class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded"
+                    >DOCKER</span
+                  >
+                </div>
+              </div>
+              <div
+                class="bg-[#252526] p-5 rounded border border-white/5 hover:bg-[#2a2a2b] transition-colors group"
+              >
+                <div class="flex justify-between mb-3">
+                  <div class="text-yellow-400 p-2 bg-white/5 rounded-md">
+                    <i data-lucide="code" class="w-5 h-5"></i>
+                  </div>
+                  <a
+                    href="https://github.com/DER25/ProyectoDOM-GaleriaDinamica"
+                    target="_blank"
+                    class="text-gray-500 hover:text-white transition-colors"
+                    ><i data-lucide="external-link" class="w-4 h-4"></i
+                  ></a>
+                </div>
+                <h3 class="font-bold mb-2">Galería Dinámica DOM</h3>
+                <p class="text-xs text-gray-400 mb-4">
+                  SPA interactiva sin frameworks. Manipulación directa del DOM.
+                </p>
+                <div class="flex gap-2">
+                  <span
+                    class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded"
+                    >JS VANILLA</span
+                  >
+                  <span
+                    class="text-[10px] bg-black/20 text-gray-400 px-2 py-1 rounded"
+                    >FRONTEND</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="win-experience"
+          class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[55rem] md:h-[36rem] rounded-lg shadow-2xl flex flex-col animate-window"
+        >
+          <div
+            class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40"
+          >
+            <div class="flex items-center gap-2 w-16">
+              <div
+                class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer"
+                onclick="closeApp('experience')"
+              ></div>
+              <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+              <div
+                class="w-3 h-3 rounded-full bg-[#28c840]"
+                onclick="toggleMaximize('win-experience')"
+              ></div>
+            </div>
+            <div
+              class="text-gray-400 text-xs font-medium flex items-center gap-2"
+            >
+              <i data-lucide="briefcase" class="w-3.5 h-3.5"></i> Experiencia
+            </div>
+            <div class="w-16"></div>
+          </div>
+          <!-- SECCION EXPERIENCIA REDISEÑADA -->
+          <div
+            class="flex-1 overflow-y-auto p-6 md:p-10 scrollbar-custom text-gray-300"
+          >
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+              <!-- Columna Izquierda: Experiencia -->
+              <div class="lg:col-span-7 space-y-8">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="p-2 bg-blue-500/20 rounded-lg text-blue-400">
+                    <i data-lucide="history" class="w-5 h-5"></i>
+                  </div>
+                  <h3
+                    class="text-lg font-bold text-white uppercase tracking-wider"
+                  >
+                    Experiencia Laboral
+                  </h3>
+                </div>
+
+                <div
+                  class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-blue-500 before:via-blue-500/20 before:to-transparent"
+                >
+                  <!-- Item de Experiencia 1 -->
+                  <div class="relative pl-12 group">
+                    <div
+                      class="absolute left-0 top-1 w-10 h-10 bg-[#1e1e1e] border-2 border-blue-500 rounded-full flex items-center justify-center z-10 group-hover:bg-blue-500 transition-colors duration-300"
+                    >
+                      <i
+                        data-lucide="briefcase"
+                        class="w-4 h-4 text-blue-400 group-hover:text-white transition-colors"
+                      ></i>
+                    </div>
+                    <div
+                      class="bg-[#252526] p-5 rounded-xl border border-white/5 hover:border-blue-500/30 transition-all shadow-lg"
+                    >
+                      <div
+                        class="flex flex-col md:flex-row md:items-center justify-between mb-3 gap-2"
+                      >
+                        <h4 class="font-bold text-white text-base">
+                          Técnico de Sistemas y Redes
+                        </h4>
+                        <span
+                          class="text-[10px] font-bold bg-blue-500/10 text-blue-400 px-2 py-1 rounded-full border border-blue-500/20 uppercase"
+                          >2025</span
+                        >
+                      </div>
+                      <div
+                        class="text-xs text-gray-400 flex items-center gap-2 mb-4"
+                      >
+                        <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
+                        Fundación de los Ferrocarriles Españoles (FFE)
+                      </div>
+                      <ul class="text-sm space-y-2 text-gray-400">
+                        <li class="flex items-start gap-2">
+                          <span
+                            class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"
+                          ></span>
+                          Gestión de copias de seguridad con
+                          <strong>Veeam Backup & Replication</strong> sobre
+                          cabinas Synology.
+                        </li>
+                        <li class="flex items-start gap-2">
+                          <span
+                            class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"
+                          ></span>
+                          Despliegue y optimización de
+                          <strong>infraestructura WiFi</strong> corporativa
+                          (tecnología Ubiquiti).
+                        </li>
+                        <li class="flex items-start gap-2">
+                          <span
+                            class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"
+                          ></span>
+                          Soporte técnico y resolución de incidencias Nivel 2.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Columna Derecha: Formación y Certificaciones -->
+              <div class="lg:col-span-5 space-y-10">
+                <!-- Subsección Formación -->
+                <section>
+                  <div class="flex items-center gap-3 mb-6">
+                    <div
+                      class="p-2 bg-emerald-500/20 rounded-lg text-emerald-400"
+                    >
+                      <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                    </div>
+                    <h3
+                      class="text-lg font-bold text-white uppercase tracking-wider"
+                    >
+                      Formación Académica
+                    </h3>
+                  </div>
+
+                  <div
+                    class="bg-gradient-to-br from-[#252526] to-[#1e1e1e] p-6 rounded-xl border border-white/5 shadow-xl relative overflow-hidden group"
+                  >
+                    <div
+                      class="absolute -right-4 -top-4 text-white/5 transform group-hover:scale-110 transition-transform"
+                    >
+                      <i data-lucide="graduation-cap" class="w-24 h-24"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-sm mb-1 leading-tight">
+                      ASIR + Máster en Ciberseguridad
+                    </h4>
+                    <p class="text-emerald-400 text-xs font-medium mb-3">
+                      Prometeo, by thePower
+                    </p>
+                    <div
+                      class="flex items-center gap-2 text-[11px] text-gray-500"
+                    >
+                      <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                      2024 - Actualidad
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Subsección Certificaciones -->
+                <section>
+                  <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-amber-500/20 rounded-lg text-amber-400">
+                      <i data-lucide="award" class="w-5 h-5"></i>
+                    </div>
+                    <h3
+                      class="text-lg font-bold text-white uppercase tracking-wider"
+                    >
+                      Certificaciones
+                    </h3>
+                  </div>
+
+                  <div class="grid grid-cols-1 gap-3">
+                    <!-- Cert 1 -->
+                    <div
+                      class="flex items-center gap-4 p-3 bg-[#252526] rounded-lg border border-white/5 hover:bg-white/5 transition-colors group"
+                    >
+                      <div
+                        class="w-10 h-10 rounded bg-blue-600/20 flex items-center justify-center text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform"
+                      >
+                        <i data-lucide="cloud" class="w-5 h-5"></i>
+                      </div>
+                      <div>
+                        <p class="text-sm font-bold text-gray-200">
+                          Azure Fundamentals
+                        </p>
+                        <p class="text-[10px] text-gray-500 uppercase">
+                          Microsoft (AZ-900)
+                        </p>
+                      </div>
+                    </div>
+                    <!-- Cert 2 -->
+                    <div
+                      class="flex items-center gap-4 p-3 bg-[#252526] rounded-lg border border-white/5 hover:bg-white/5 transition-colors group"
+                    >
+                      <div
+                        class="w-10 h-10 rounded bg-yellow-600/20 flex items-center justify-center text-yellow-400 border border-yellow-500/20 group-hover:scale-110 transition-transform"
+                      >
+                        <i data-lucide="code" class="w-5 h-5"></i>
+                      </div>
+                      <div>
+                        <p class="text-sm font-bold text-gray-200">
+                          Python Specialist
+                        </p>
+                        <p class="text-[10px] text-gray-500 uppercase">
+                          Google IT Automation
+                        </p>
+                      </div>
+                    </div>
+                    <!-- Cert 3 -->
+                    <div
+                      class="flex items-center gap-4 p-3 bg-[#252526] rounded-lg border border-white/5 hover:bg-white/5 transition-colors group"
+                    >
+                      <div
+                        class="w-10 h-10 rounded bg-purple-600/20 flex items-center justify-center text-purple-400 border border-purple-500/20 group-hover:scale-110 transition-transform"
+                      >
+                        <i data-lucide="languages" class="w-5 h-5"></i>
+                      </div>
+                      <div>
+                        <p class="text-sm font-bold text-gray-200">
+                          B2 First (FCE)
+                        </p>
+                        <p class="text-[10px] text-gray-500 uppercase">
+                          University of Cambridge
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="win-skills"
+          class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[50rem] md:h-[30rem] rounded-lg shadow-2xl flex flex-col animate-window font-mono"
+        >
+          <div
+            class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40"
+          >
+            <div class="flex items-center gap-2 w-16">
+              <div
+                class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer"
+                onclick="closeApp('skills')"
+              ></div>
+              <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+              <div class="w-3 h-3 rounded-full bg-[#28c840]"></div>
+            </div>
+            <div class="text-gray-400 text-xs">zsh — skills.sh</div>
+            <div class="w-16"></div>
+          </div>
+          <div class="flex-1 p-6 text-sm overflow-y-auto scrollbar-custom">
+            <div class="mb-4">
+              <span class="text-green-500">➜</span>
+              <span class="text-blue-400">~</span>
+              <span class="text-yellow-400">./show_skills.sh</span> --verbose
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 p-2 text-gray-300">
+              <div>
+                <h3
+                  class="text-green-500 font-bold mb-3 text-xs uppercase tracking-widest"
+                >
+                  >> HARD SKILLS
+                </h3>
+                <ul class="space-y-2 text-xs">
+                  <li>[✔] Pentesting & Seguridad Ofensiva (Nmap, Wireshark)</li>
+                  <li>[✔] Networking (Cisco Packet Tracer)</li>
+                  <li>[✔] Bases de Datos (PostgreSQL, MySQL)</li>
+                  <li>[✔] Web Dev (HTML, CSS, JS)</li>
+                  <li>[✔] Scripting & Automatización (Python, Bash)</li>
+                  <li>[✔] Windows & Linux Server (AD)</li>
+                  <li>[✔] Azure Cloud Services</li>
+                  <li>[✔] SOC & Seguridad Defensiva (SIEM)</li>
+                  <li>[✔] OSINT (Shodan, Maltego)</li>
+                </ul>
+              </div>
+              <div>
+                <h3
+                  class="text-blue-500 font-bold mb-3 text-xs uppercase tracking-widest"
+                >
+                  >> SOFT SKILLS
+                </h3>
+                <ul class="space-y-2 text-xs">
+                  <li>[*] Trabajo en Equipo</li>
+                  <li>[*] Empatía y Orientación al usuario</li>
+                  <li>[*] Proactividad</li>
+                  <li>[*] Resolución de problemas</li>
+                  <li>[*] Gestión del estrés</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2">
+              <span class="text-green-500">➜</span>
+              <span class="text-blue-400">~</span>
+              <span class="w-2 h-4 bg-gray-500 cursor-blink"></span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="win-contact"
+          class="window window-surface hidden-app fixed z-40 inset-2 md:inset-auto md:top-16 md:left-1/2 md:-translate-x-1/2 md:w-[55rem] md:h-[36rem] rounded-lg shadow-2xl flex flex-col animate-window"
+        >
+          <div
+            class="window-header h-9 bg-[#252526] flex items-center justify-between px-4 shrink-0 border-b border-black/40"
+          >
+            <div class="flex items-center gap-2 w-16">
+              <div
+                class="w-3 h-3 rounded-full bg-[#ff5f57] cursor-pointer"
+                onclick="closeApp('contact')"
+              ></div>
+              <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+              <div class="w-3 h-3 rounded-full bg-[#28c840]"></div>
+            </div>
+            <div
+              class="text-gray-400 text-xs font-medium flex items-center gap-2"
+            >
+              Correo
+            </div>
+            <div class="w-16"></div>
+          </div>
+          <div class="flex-1 flex flex-col p-8">
+            <form onsubmit="handleEmail(event)" class="space-y-4">
+              <div class="flex flex-col gap-1">
+                <label
+                  class="text-[10px] text-gray-500 font-bold uppercase ml-1"
+                  >Para</label
+                >
+                <div
+                  class="p-2 bg-[#2a2a2b] rounded border border-white/5 text-sm text-gray-300"
+                >
+                  Daniel De Elízaga
+                  <span class="text-gray-500">&lt;delizaga4@gmail.com&gt;</span>
+                </div>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label
+                  class="text-[10px] text-gray-500 font-bold uppercase ml-1"
+                  >Asunto</label
+                >
+                <input
+                  id="email-subject"
+                  type="text"
+                  class="bg-[#2a2a2b] border border-white/5 rounded p-3 text-sm outline-none focus:border-blue-500/50"
+                />
+              </div>
+              <div class="flex-1 flex flex-col gap-1">
+                <label
+                  class="text-[10px] text-gray-500 font-bold uppercase ml-1"
+                  >Mensaje</label
+                >
+                <textarea
+                  id="email-body"
+                  class="flex-1 min-h-[150px] bg-[#2a2a2b] border border-white/5 rounded p-3 text-sm outline-none focus:border-blue-500/50 resize-none"
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded font-bold text-sm shadow-xl self-end"
+              >
+                Enviar Correo
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOCK -->
+      <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
+        <div
+          class="flex items-end gap-3 px-4 py-3 bg-white/10 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl"
+        >
+          <div
+            class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer"
+            onclick="openApp('about')"
+          >
+            <i data-lucide="user" class="text-blue-400 w-6 h-6"></i>
+            <div id="dot-about" class="dock-indicator hidden"></div>
+          </div>
+          <div
+            class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer"
+            onclick="openApp('projects')"
+          >
+            <i data-lucide="folder" class="text-blue-400 w-6 h-6"></i>
+            <div id="dot-projects" class="dock-indicator hidden"></div>
+          </div>
+          <div
+            class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer"
+            onclick="openApp('experience')"
+          >
+            <i data-lucide="briefcase" class="text-blue-400 w-6 h-6"></i>
+            <div id="dot-experience" class="dock-indicator hidden"></div>
+          </div>
+          <div
+            class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer"
+            onclick="openApp('skills')"
+          >
+            <i data-lucide="terminal" class="text-gray-400 w-6 h-6"></i>
+            <div id="dot-skills" class="dock-indicator hidden"></div>
+          </div>
+          <div class="w-px h-8 bg-white/20 mx-1"></div>
+          <div
+            class="p-3 bg-white/5 border border-white/5 rounded-2xl hover:-translate-y-2 transition-all cursor-pointer"
+            onclick="openApp('contact')"
+          >
+            <i data-lucide="mail" class="text-blue-400 w-6 h-6"></i>
+            <div id="dot-contact" class="dock-indicator hidden"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        lucide.createIcons();
-        function updateClocks() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const dateStr = now.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
-            document.getElementById('lock-time').textContent = timeStr;
-            document.getElementById('lock-date').textContent = dateStr;
-            document.getElementById('top-bar-time').textContent = timeStr;
-        }
-        setInterval(updateClocks, 1000);
-        updateClocks();
+      lucide.createIcons()
+      function updateClocks() {
+        const now = new Date()
+        const timeStr = now.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+        const dateStr = now.toLocaleDateString('es-ES', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long'
+        })
+        const clockTime = document.getElementById('lock-time')
+        const clockDate = document.getElementById('lock-date')
+        const topBarTime = document.getElementById('top-bar-time')
+        if (clockTime) clockTime.textContent = timeStr
+        if (clockDate) clockDate.textContent = dateStr
+        if (topBarTime) topBarTime.textContent = timeStr
+      }
+      setInterval(updateClocks, 1000)
+      updateClocks()
 
-        document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); unlock(); });
-        function unlock() {
-            document.getElementById('lock-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('lock-screen').style.display = 'none';
-                document.getElementById('desktop').classList.remove('hidden');
-                openApp('about');
-            }, 800);
-        }
+      document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault()
+        unlock()
+      })
+      function unlock() {
+        document.getElementById('lock-screen').style.opacity = '0'
+        setTimeout(() => {
+          document.getElementById('lock-screen').style.display = 'none'
+          document.getElementById('desktop').classList.remove('hidden')
+          openApp('about')
+        }, 800)
+      }
 
-        function openApp(id) {
-            const win = document.getElementById(`win-${id}`);
-            const dot = document.getElementById(`dot-${id}`);
-            if (!win.classList.contains('hidden-app')) {
-                document.querySelectorAll('.window').forEach(w => w.style.zIndex = '40');
-                win.style.zIndex = '45';
-                return;
-            }
-            win.classList.remove('hidden-app');
-            if(dot) dot.classList.remove('hidden');
-            document.querySelectorAll('.window').forEach(w => w.style.zIndex = '40');
-            win.style.zIndex = '45';
+      function openApp(id) {
+        const win = document.getElementById(`win-${id}`)
+        const dot = document.getElementById(`dot-${id}`)
+        if (!win.classList.contains('hidden-app')) {
+          document
+            .querySelectorAll('.window')
+            .forEach((w) => (w.style.zIndex = '40'))
+          win.style.zIndex = '45'
+          return
         }
+        win.classList.remove('hidden-app')
+        if (dot) dot.classList.remove('hidden')
+        document
+          .querySelectorAll('.window')
+          .forEach((w) => (w.style.zIndex = '40'))
+        win.style.zIndex = '45'
+      }
 
-        function closeApp(id) {
-            document.getElementById(`win-${id}`).classList.add('hidden-app');
-            const dot = document.getElementById(`dot-${id}`);
-            if(dot) dot.classList.add('hidden');
+      function closeApp(id) {
+        document.getElementById(`win-${id}`).classList.add('hidden-app')
+        const dot = document.getElementById(`dot-${id}`)
+        if (dot) dot.classList.add('hidden')
+      }
+
+      function toggleMaximize(id) {
+        const win = document.getElementById(id)
+        if (win.classList.contains('md:inset-auto')) {
+          win.classList.remove(
+            'md:inset-auto',
+            'md:top-16',
+            'md:left-1/2',
+            'md:-translate-x-1/2',
+            'md:w-[55rem]',
+            'md:h-[36rem]',
+            'rounded-lg'
+          )
+          win.classList.add('inset-0', 'top-8', 'rounded-none')
+        } else {
+          win.classList.add(
+            'md:inset-auto',
+            'md:top-16',
+            'md:left-1/2',
+            'md:-translate-x-1/2',
+            'md:w-[55rem]',
+            'md:h-[36rem]',
+            'rounded-lg'
+          )
+          win.classList.remove('inset-0', 'top-8', 'rounded-none')
         }
+      }
 
-        function toggleMaximize(id) {
-            const win = document.getElementById(id);
-            if (win.classList.contains('md:inset-auto')) {
-                win.classList.remove('md:inset-auto', 'md:top-16', 'md:left-1/2', 'md:-translate-x-1/2', 'md:w-[55rem]', 'md:h-[36rem]', 'rounded-lg');
-                win.classList.add('inset-0', 'top-8', 'rounded-none');
-            } else {
-                win.classList.add('md:inset-auto', 'md:top-16', 'md:left-1/2', 'md:-translate-x-1/2', 'md:w-[55rem]', 'md:h-[36rem]', 'rounded-lg');
-                win.classList.remove('inset-0', 'top-8', 'rounded-none');
-            }
-        }
+      function handleEmail(e) {
+        e.preventDefault()
+        const subject = document.getElementById('email-subject').value
+        const body = document.getElementById('email-body').value
+        window.location.href = `mailto:delizaga4@gmail.com?subject=${encodeURIComponent(
+          subject
+        )}&body=${encodeURIComponent(body)}`
+      }
 
-        function handleEmail(e) {
-            e.preventDefault();
-            const subject = document.getElementById('email-subject').value;
-            const body = document.getElementById('email-body').value;
-            window.location.href = `mailto:delizaga4@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        }
-
-        document.querySelectorAll('.window-header').forEach(header => {
-            header.addEventListener('mousedown', (e) => {
-                const win = header.parentElement;
-                if (win.classList.contains('rounded-none')) return;
-                document.querySelectorAll('.window').forEach(w => w.style.zIndex = '40');
-                win.style.zIndex = '45';
-                let shiftX = e.clientX - win.getBoundingClientRect().left;
-                let shiftY = e.clientY - win.getBoundingClientRect().top;
-                function moveAt(pageX, pageY) {
-                    win.style.left = pageX - shiftX + 'px';
-                    win.style.top = pageY - shiftY + 'px';
-                    win.style.transform = 'none';
-                }
-                function onMouseMove(event) { moveAt(event.pageX, event.pageY); }
-                document.addEventListener('mousemove', onMouseMove);
-                document.onmouseup = function() {
-                    document.removeEventListener('mousemove', onMouseMove);
-                    document.onmouseup = null;
-                };
-            });
-        });
+      document.querySelectorAll('.window-header').forEach((header) => {
+        header.addEventListener('mousedown', (e) => {
+          const win = header.parentElement
+          if (win.classList.contains('rounded-none')) return
+          document
+            .querySelectorAll('.window')
+            .forEach((w) => (w.style.zIndex = '40'))
+          win.style.zIndex = '45'
+          let shiftX = e.clientX - win.getBoundingClientRect().left
+          let shiftY = e.clientY - win.getBoundingClientRect().top
+          function moveAt(pageX, pageY) {
+            win.style.left = pageX - shiftX + 'px'
+            win.style.top = pageY - shiftY + 'px'
+            win.style.transform = 'none'
+          }
+          function onMouseMove(event) {
+            moveAt(event.pageX, event.pageY)
+          }
+          document.addEventListener('mousemove', onMouseMove)
+          document.onmouseup = function () {
+            document.removeEventListener('mousemove', onMouseMove)
+            document.onmouseup = null
+          }
+        })
+      })
     </script>
-</body>
+  </body>
 </html>
